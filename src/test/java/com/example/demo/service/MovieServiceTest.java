@@ -41,12 +41,32 @@ class MovieServiceTest {
 
     }
 
+    @Test
+    @DisplayName("평점이 0인 데이터는 제외하는지")
+    void user_ratings_exclude_zero() {
+
+        //given
+        float expectedMovieSize = 3;
+        MovieRepository movieRepository = Mockito.mock(MovieRepository.class);
+        Mockito.when(movieRepository.findByQuery(any())).thenReturn(getStubMovieList());
+        movieService = new MovieService(movieRepository);
+
+        //when
+        List<MovieDTO> actualList = movieService.findByQuery("쿼리");
+
+        //then
+        assertEquals(expectedMovieSize, actualList.size());
+
+    }
+
+
     private ResponseMovie getStubMovieList() {
 
         List<ResponseMovie.Item> items = Arrays.asList(
                 ResponseMovie.Item.builder().title("영화1").actor("배우1").userRating(9.3f).build(),
                 ResponseMovie.Item.builder().title("영화2").actor("배우2").userRating(9.7f).build(),
-                ResponseMovie.Item.builder().title("영화3").actor("배우3").userRating(7.5f).build()
+                ResponseMovie.Item.builder().title("영화3").actor("배우3").userRating(0.0f).build(),
+                ResponseMovie.Item.builder().title("영화4").actor("배우4").userRating(7.5f).build()
         );
 
         return ResponseMovie.builder()
