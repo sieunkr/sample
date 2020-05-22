@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+import com.example.demo.config.NaverProperties;
 import com.example.demo.repository.response.ResponseBlog;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,26 +14,16 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class BlogRepository {
 
-    @Value("${naver.openapi.blogUrl}")
-    private String naverOpenApiUrl;
-
-    @Value("${naver.openapi.clientId}")
-    private String naverOpenApiClientId;
-
-    @Value("${naver.openapi.clientSecret}")
-    private String naverOpenApiClientSecret;
-
+    private final NaverProperties naverProperties;
     private final RestTemplate naverRestTemplate;
 
     public ResponseBlog findByQuery(String query) {
 
-        //TODO: 코드 리팩토링
-
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("X-Naver-Client-Id", naverOpenApiClientId);
-        httpHeaders.add("X-Naver-Client-Secret", naverOpenApiClientSecret);
+        httpHeaders.add("X-Naver-Client-Id", naverProperties.getClientId());
+        httpHeaders.add("X-Naver-Client-Secret", naverProperties.getClientSecret());
 
-        String url = naverOpenApiUrl + "?query=" + query;
+        String url = naverProperties.getBlogUrl() + "?query=" + query;
 
         return naverRestTemplate.exchange(url, HttpMethod.GET, new HttpEntity(httpHeaders), ResponseBlog.class).getBody();
     }
