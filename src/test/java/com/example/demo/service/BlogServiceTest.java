@@ -1,5 +1,9 @@
-package com.example.demo;
+package com.example.demo.service;
 
+import com.example.demo.repository.BlogRepository;
+import com.example.demo.repository.response.ResponseBlog;
+import com.example.demo.service.BlogService;
+import com.example.demo.service.dto.BlogDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -7,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,12 +36,13 @@ class BlogServiceTest {
         String title = "블로그주제";
         String blogger = "eddy";
 
-        ResponseBlog responseBlog = new ResponseBlog();
-        responseBlog.setItems(Arrays.asList(
-                getStubItem(title ,"http://naver..",blogger ,"블로그설명"),
-                getStubItem("anotherTitle" ,"http://naver..",blogger ,"블로그설명"))
-        );
-        responseBlog.setTotal(2);
+        ResponseBlog responseBlog = ResponseBlog.builder()
+                .total(2)
+                .items(Arrays.asList(
+                        getStubItem(title, "http://naver..", blogger, "블로그설명"),
+                        getStubItem("anotherTitle", "http://naver..", blogger, "블로그설명")))
+                .build();
+
         Mockito.when(blogRepository.findByQuery(any())).thenReturn(responseBlog);
 
         //when
@@ -51,12 +55,12 @@ class BlogServiceTest {
 
     ResponseBlog.naverDocument getStubItem(String title, String link, String blogger, String description) {
 
-        ResponseBlog.naverDocument item = new ResponseBlog.naverDocument();
-        item.setTitle(title);
-        item.setLink(link);
-        item.setBloggername(blogger);
-        item.setDescription(description);
-        return item;
+        return ResponseBlog.naverDocument.builder()
+                .title(title)
+                .link(link)
+                .bloggername(blogger)
+                .description(description)
+                .build();
     }
 
 }

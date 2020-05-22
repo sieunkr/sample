@@ -1,5 +1,8 @@
-package com.example.demo;
+package com.example.demo.service;
 
+import com.example.demo.service.dto.MovieDTO;
+import com.example.demo.repository.MovieRepository;
+import com.example.demo.service.dto.MovieGroup;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,13 +19,14 @@ public class MovieService {
 
     public List<MovieDTO> findByQuery(String query) {
 
-        return movieRepository.findByQuery(query).getItems().stream()
+        MovieGroup movieGroup = new MovieGroup(movieRepository.findByQuery(query).getItems().stream()
                 .map(m -> MovieDTO.builder()
                         .title(m.getTitle())
                         .link(m.getLink())
                         .userRating(m.getUserRating())
                         .build())
-                .collect(Collectors.toList());
-    }
+                .collect(Collectors.toList()));
 
+        return movieGroup.getList();
+    }
 }
