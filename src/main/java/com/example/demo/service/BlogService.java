@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.service.dto.BlogDTO;
 import com.example.demo.repository.BlogRepository;
+import com.example.demo.service.dto.BlogGroup;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,15 +19,16 @@ public class BlogService {
 
     public List<BlogDTO> findByQuery(String query) {
 
-        return blogRepository.findByQuery(query).getItems().stream()
+        BlogGroup blogGroup = new BlogGroup(blogRepository.findByQuery(query).getItems().stream()
                 .map(b -> BlogDTO.builder()
                         .title(b.getTitle())
-                        .link(b.getLink())
+                        .blogger(b.getBloggername())
                         .description(b.getDescription())
                         .postdate(b.getPostdate())
-                        .blogger(b.getBloggername())
-                        .build()
-                ).collect(Collectors.toList());
+                        .link(b.getLink())
+                        .build())
+                .collect(Collectors.toList()));
 
+        return blogGroup.getList();
     }
 }
