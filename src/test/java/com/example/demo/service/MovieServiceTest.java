@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,14 +60,36 @@ class MovieServiceTest {
 
     }
 
+    @Test
+    @DisplayName("<b>, </b> 제거 잘 하는지")
+    void remove_special_characters_when_mapping_title() {
+
+        //given
+        float expectedSpecialCharacterCount = 0;
+        MovieRepository movieRepository = Mockito.mock(MovieRepository.class);
+        Mockito.when(movieRepository.findByQuery(any())).thenReturn(getStubMovieList());
+        movieService = new MovieService(movieRepository);
+
+        //when
+        List<MovieDTO> actualList = movieService.findByQuery("쿼리");
+
+        //then
+        assertEquals(expectedSpecialCharacterCount,
+                StringUtils.countOccurrencesOf(actualList.stream().findFirst().get().getTitle(), "<b>"));
+
+        assertEquals(expectedSpecialCharacterCount,
+                StringUtils.countOccurrencesOf(actualList.stream().findFirst().get().getTitle(), "</b>"));
+
+    }
+
 
     private ResponseMovie getStubMovieList() {
 
         List<ResponseMovie.Item> items = Arrays.asList(
-                ResponseMovie.Item.builder().title("영화1").actor("배우1").userRating(9.3f).build(),
-                ResponseMovie.Item.builder().title("영화2").actor("배우2").userRating(9.7f).build(),
-                ResponseMovie.Item.builder().title("영화3").actor("배우3").userRating(0.0f).build(),
-                ResponseMovie.Item.builder().title("영화4").actor("배우4").userRating(7.5f).build()
+                ResponseMovie.Item.builder().title("<b>영화1</b> 제목").actor("배우1").userRating(9.3f).build(),
+                ResponseMovie.Item.builder().title("<b>영화2</b> 제목").actor("배우2").userRating(9.7f).build(),
+                ResponseMovie.Item.builder().title("<b>영화3</b> 제목").actor("배우3").userRating(0.0f).build(),
+                ResponseMovie.Item.builder().title("<b>영화4</b> 제목").actor("배우4").userRating(7.5f).build()
         );
 
         return ResponseMovie.builder()
