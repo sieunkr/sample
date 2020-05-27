@@ -17,7 +17,8 @@ public class MovieGroup {
 
     private List<MovieDTO> sortByRanking() {
         return list.stream()
-                .sorted((a, b) -> (int)(b.getUserRating()*100) - (int)(a.getUserRating()*100))  //TODO: 깔끔하지 않음..
+                //.sorted((a, b) -> (int)(b.getUserRating()*100) - (int)(a.getUserRating()*100))  //TODO: 깔끔하지 않음..
+                .sorted((a, b) -> b.getUserRating() > a.getUserRating() ? 1 : -1)
                 .collect(Collectors.toList());
     }
 
