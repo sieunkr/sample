@@ -8,7 +8,7 @@ public class MovieGroup {
     private final List<MovieDTO> list;
 
     public MovieGroup(List<MovieDTO> list) {
-        this.list = list;
+        this.list = excludeOfRanking(list);
     }
 
     public List<MovieDTO> getList() {
@@ -17,7 +17,15 @@ public class MovieGroup {
 
     private List<MovieDTO> sortByRanking() {
         return list.stream()
-                .sorted((a, b) -> (int)(b.getUserRating()*100) - (int)(a.getUserRating()*100))  //TODO: 깔끔하지 않음..
+                //.sorted((a, b) -> (int)(b.getUserRating()*100) - (int)(a.getUserRating()*100))  //TODO: 깔끔하지 않음..
+                .sorted((a, b) -> b.getUserRating() > a.getUserRating() ? 1 : -1)
+                .collect(Collectors.toList());
+    }
+
+    //TODO: 파라미터로 넘기는 구조가 깔끔하지 않은 듯..
+    private List<MovieDTO> excludeOfRanking(List<MovieDTO> list) {
+        return list.stream()
+                .filter(b -> !((Float)b.getUserRating()).equals(0.0f))
                 .collect(Collectors.toList());
     }
 }
